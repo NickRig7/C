@@ -444,7 +444,8 @@ function startDrag(e) {
     isDragging = false;
     topCard.classList.remove('swiping'); // ✅ Remove glow effect on drag end
     const deltaX = currentX - startX;
-    const threshold = 150;
+    //const threshold = 150;
+    const threshold = window.innerWidth < 480 ? 60 : 100;
 
     if (Math.abs(deltaX) > threshold) {
       topCard.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
