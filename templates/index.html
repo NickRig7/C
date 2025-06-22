@@ -237,50 +237,53 @@
       margin-bottom: 1rem;
     }
 
-.social-links {
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-}
+    .social-links {
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* keeps separators centered */
+      gap: 0.6rem;
+      width: 100%;
+    }
 
-.social-link {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1rem;
-  color: #ffffff;
-  padding-left: 0;
-  justify-content: center;
-}
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1rem;
+      color: #ffffff;
+      padding: 0.3rem 0;
+      justify-content: flex-start;
+      width: 80%;
+      max-width: 250px;
+      margin-left: 4rem; /* ✅ shift icon+text to the right only */
+    }
 
-.social-link a {
-  color: #ffffff;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
+    .social-link a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
 
-.social-link a:hover {
-  color: #00bcd4;
-}
+    .social-link a:hover {
+      color: #00bcd4;
+    }
 
-.social-icon {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-}
+    .social-icon {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
 
-.social-separator {
-  border: none;
-  height: 1px;
-  background-color: rgba(150, 150, 150, 0.25);
-  margin: 0.4rem 0;
-  width: 55%;
-  align-self: center;
-}
-
+    .social-separator {
+      border: none;
+      height: 1px;
+      background-color: rgba(150, 150, 150, 0.25);
+      margin: 0.4rem 0;
+      width: 55%; /* ✅ keep this centered */
+      align-self: center;
+    }
 
     .side-menu-footer {
       margin-top: auto;
@@ -332,32 +335,32 @@
     <div class="card-stack" id="news-container"></div>
 
     <div class="side-menu" id="sideMenu">
-  <img src="/static/abc.png" alt="Side Menu Banner" class="side-menu-img" />
-  <div class="social-links">
-  <div class="social-link">
-    <img src="/static/twwit.png" alt="Twitter" class="social-icon" />
-    <a href="https://twitter.com/yourhandle" target="_blank">Twitter</a>
-  </div>
-  <hr class="social-separator" />
-  <div class="social-link">
-    <img src="/static/web.png" alt="Telegram" class="social-icon" />
-    <a href="https://t.me/yourhandle" target="_blank">Telegram</a>
-  </div>
-  <hr class="social-separator" />
-  <div class="social-link">
-    <img src="/static/link2.png" alt="GitHub" class="social-icon" />
-    <a href="https://github.com/yourprofile" target="_blank">GitHub</a>
-  </div>
-  <hr class="social-separator" />
-  <div class="social-link">
-    <img src="/static/youp.png" alt="YouTube" class="social-icon" />
-    <a href="https://youtube.com/yourchannel" target="_blank">YouTube</a>
-  </div>
-</div>
-  <div class="side-menu-footer">
-    © 2025 ChainShots v1.0
-  </div>
-</div>
+      <img src="/static/abc.png" alt="Side Menu Banner" class="side-menu-img" />
+      <div class="social-links">
+      <div class="social-link">
+        <img src="/static/twwit.png" alt="Twitter" class="social-icon" />
+        <a href="https://twitter.com/yourhandle" target="_blank">Twitter</a>
+      </div>
+      <hr class="social-separator" />
+      <div class="social-link">
+        <img src="/static/web.png" alt="Telegram" class="social-icon" />
+        <a href="https://t.me/yourhandle" target="_blank">Telegram</a>
+      </div>
+      <hr class="social-separator" />
+      <div class="social-link">
+        <img src="/static/link2.png" alt="GitHub" class="social-icon" />
+        <a href="https://github.com/yourprofile" target="_blank">GitHub</a>
+      </div>
+      <hr class="social-separator" />
+      <div class="social-link">
+        <img src="/static/youp.png" alt="YouTube" class="social-icon" />
+        <a href="https://youtube.com/yourchannel" target="_blank">YouTube</a>
+      </div>
+    </div>
+      <div class="side-menu-footer">
+        © 2025 ChainShots v1.0
+      </div>
+    </div>
 
 
   </div>
