@@ -454,35 +454,38 @@ function startDrag(e) {
       topCard.style.transform = `translateX(${deltaX > 0 ? 1000 : -1000}px) rotate(${deltaX > 0 ? 20 : -20}deg)`;
       topCard.style.opacity = '0';
 
-      setTimeout(() => {
-        const link = topCard.querySelector('.read-more a').href;
-        topCard.remove();
+    setTimeout(() => {
+      const link = topCard.querySelector('.read-more a').href;
+      topCard.remove();
 
-        // ✅ Track removed articles
-        const removedKey = `removed-${currentCategory}`;
-        let removed = JSON.parse(sessionStorage.getItem(removedKey)) || [];
-        removed.push(link);
-        sessionStorage.setItem(removedKey, JSON.stringify(removed));
+      // ✅ Track removed articles
+      const removedKey = `removed-${currentCategory}`;
+      let removed = JSON.parse(sessionStorage.getItem(removedKey)) || [];
+      removed.push(link);
+      sessionStorage.setItem(removedKey, JSON.stringify(removed));
 
-        // ✅ Update cached list
-        const cached = JSON.parse(sessionStorage.getItem(`news-${currentCategory}`)) || [];
-        const updated = cached.filter(article => article.link !== link);
-        sessionStorage.setItem(`news-${currentCategory}`, JSON.stringify(updated));
+      // ✅ Update cached list
+      const cached = JSON.parse(sessionStorage.getItem(`news-${currentCategory}`)) || [];
+      const updated = cached.filter(article => article.link !== link);
+      sessionStorage.setItem(`news-${currentCategory}`, JSON.stringify(updated));
 
-        const newCards = document.querySelectorAll('.card');
-        topCard = newCards[newCards.length - 1];
+      const newCards = document.querySelectorAll('.card');
+      topCard = newCards[newCards.length - 1];
 
-        if (topCard) {
+      if (topCard) {
+        // ✅ Reattach swipe handlers immediately
+        requestAnimationFrame(() => {
           topCard.addEventListener('mousedown', startDrag);
           topCard.addEventListener('touchstart', startDrag);
-        } else {
-          // 🔁 Auto-loop logic
-          setTimeout(() => {
-            sessionStorage.removeItem(`removed-${currentCategory}`);
-            loadNews(currentCategory);
-          }, 300);
-        }
-      }, 400);
+        });
+      } else {
+        // 🔁 Auto-loop logic
+        setTimeout(() => {
+          sessionStorage.removeItem(`removed-${currentCategory}`);
+          loadNews(currentCategory);
+        }, 300);
+      }
+    }, 400);
     } else {
       // It's just a tap — reset transform
       topCard.style.transition = 'transform 0.3s ease';
