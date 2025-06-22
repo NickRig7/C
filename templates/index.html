@@ -148,12 +148,14 @@
       transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .card:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-      z-index: 2;
-    }
-
+.card:hover {
+  transform: scale(1.015);
+  box-shadow:
+    0 0 25px rgba(0, 255, 255, 0.7),
+    0 0 40px rgba(0, 255, 255, 0.4),
+    0 0 60px rgba(0, 255, 255, 0.2);
+  z-index: 2;
+}
     .card img {
       width: 100%;
       height: 220px;
@@ -287,14 +289,25 @@
       color: rgba(255, 255, 255, 0.4);
       text-align: center;
     }
-        
-    @media (hover: hover) and (pointer: fine) {
-    .card:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+
+    .card.swiping {
+      box-shadow:
+        0 0 25px rgba(0, 255, 255, 0.7),
+        0 0 40px rgba(0, 255, 255, 0.4),
+        0 0 60px rgba(0, 255, 255, 0.2);
       z-index: 2;
     }
-}
+        
+    @media (hover: hover) and (pointer: fine) {
+      .card:hover {
+        transform: scale(1.015);
+        box-shadow:
+          0 0 25px rgba(0, 255, 255, 0.7),
+          0 0 40px rgba(0, 255, 255, 0.4),
+          0 0 60px rgba(0, 255, 255, 0.2);
+        z-index: 2;
+      }
+    }
 
   </style>
 </head>
@@ -410,14 +423,15 @@ function initSwipe() {
   let isDragging = false;
   let startX, currentX;
 
-  function startDrag(e) {
-    isDragging = true;
-    startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
-    document.addEventListener('mousemove', onDrag);
-    document.addEventListener('mouseup', endDrag);
-    document.addEventListener('touchmove', onDrag);
-    document.addEventListener('touchend', endDrag);
-  }
+function startDrag(e) {
+  isDragging = true;
+  startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+  topCard.classList.add('swiping'); // ✅ Add glow effect
+  document.addEventListener('mousemove', onDrag);
+  document.addEventListener('mouseup', endDrag);
+  document.addEventListener('touchmove', onDrag);
+  document.addEventListener('touchend', endDrag);
+}
 
   function onDrag(e) {
     if (!isDragging) return;
@@ -428,6 +442,7 @@ function initSwipe() {
 
   function endDrag() {
     isDragging = false;
+    topCard.classList.remove('swiping'); // ✅ Remove glow effect on drag end
     const deltaX = currentX - startX;
     const threshold = 150;
 
