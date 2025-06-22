@@ -425,6 +425,7 @@ function initSwipe() {
 
 function startDrag(e) {
   isDragging = true;
+  currentX = undefined;
   startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
   topCard.classList.add('swiping'); // ✅ Add glow effect
   document.addEventListener('mousemove', onDrag);
@@ -443,9 +444,10 @@ function startDrag(e) {
   function endDrag() {
     isDragging = false;
     topCard.classList.remove('swiping'); // ✅ Remove glow effect on drag end
-    const deltaX = currentX - startX;
+    //const deltaX = currentX - startX;
     //const threshold = 150;
     const threshold = window.innerWidth < 480 ? 60 : 100;
+    const deltaX = currentX !== undefined ? currentX - startX : 0;
 
     if (Math.abs(deltaX) > threshold) {
       topCard.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
@@ -482,6 +484,7 @@ function startDrag(e) {
         }
       }, 400);
     } else {
+      // It's just a tap — reset transform
       topCard.style.transition = 'transform 0.3s ease';
       topCard.style.transform = 'translateX(0px) rotate(0deg)';
     }
