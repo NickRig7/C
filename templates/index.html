@@ -47,13 +47,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh; /* 🆕 ensures full screen behavior */
+  /*height: 100vh;  🆕 ensures full screen behavior */
+  height: calc(var(--vh, 1vh) * 100); /* ✅ dynamic height fallback */
   overflow: hidden;
 }
 
     .info-box {
       width: 100%;
-      flex-shrink: 0; /* ✅ prevent shrinking when height is tight */
+      
       background-image: url('/static/xyz.png');
       background-size: cover;
       background-repeat: no-repeat;
@@ -677,6 +678,27 @@ document.addEventListener('click', (e) => {
   }
 });
 
+</script>
+
+<script>
+function adjustLayoutHeight() {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+  // Apply only when NOT in standalone (browser mode)
+  if (!isStandalone) {
+    document.querySelector('.main-container').style.height = `${window.innerHeight}px`;
+  } else {
+    // In PWA mode, use 100dvh (via CSS) as intended
+    document.querySelector('.main-container').style.height = '';
+  }
+}
+
+// Run on load and resize
+window.addEventListener('load', adjustLayoutHeight);
+window.addEventListener('resize', adjustLayoutHeight);
 </script>
 
 </body>
