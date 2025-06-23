@@ -208,7 +208,7 @@
       text-decoration: underline;
     }
 
-    .side-menu {
+    /*.side-menu {
       display: none;
       position: absolute;
       top: 0;
@@ -216,8 +216,8 @@
       width: 75%;
       max-width: 320px;
       height: 93%;
-      background-color: rgba(30, 30, 30, 0.7); /* Transparent background */
-      backdrop-filter: blur(8px); /* Optional glassmorphism effect */
+      background-color: rgba(30, 30, 30, 0.7); /* Transparent background 
+      backdrop-filter: blur(8px); /* Optional glassmorphism effect 
       z-index: 999;
       box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
       transition: right 0.3s ease, opacity 0.3s ease;
@@ -229,9 +229,30 @@
       flex-direction: column;
       opacity: 0;
       pointer-events: none;
-    }
+    }*/
 
-    /* For desktop/laptop: position side-menu inside main-container */
+.side-menu {
+  position: fixed; /* use fixed for better mobile behavior */
+  top: 0;
+  right: -75%;
+  width: 75vw; /* keep 75% width */
+  max-width: 320px;
+  height: 100vh; /* use full screen height */
+  background-color: rgba(30, 30, 30, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 999;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease, opacity 0.3s ease;
+  border-radius: 20px 20px 20px 20px;
+  padding: 1rem; /* remove extra spacing */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+    /* For desktop/laptop: position side-menu inside main-container 
     @media (min-width: 768px) {
       .main-container {
         position: relative;
@@ -248,7 +269,27 @@
       .side-menu.open {
         right: 0;
       }
-    }
+    } */
+
+    @media (min-width: 768px) {
+  .main-container {
+    position: relative;
+  }
+
+  .side-menu {
+    position: absolute;
+    top: 0;
+    right: -100%;
+    width: 75%;
+    max-width: 320px;
+    height: 100%;
+    border-radius: 20px;
+  }
+
+  .side-menu.open {
+    right: 0;
+  }
+}
 
     .side-menu.open {
       right: 0;
@@ -256,14 +297,25 @@
       pointer-events: auto;
     }
 
-    .side-menu-img {
+    /*.side-menu-img {
       width: 100%;
       height: 30%;
       object-fit: cover;
       border-radius: 20px 20px 0 0;
       filter: brightness(0.6) saturate(1.5);
       margin-bottom: 1rem;
-    }
+    }*/
+
+    .side-menu-img {
+  width: 100%;
+  height: 30%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 20px 20px 0 0;
+  filter: brightness(0.6) saturate(1.5);
+  flex-shrink: 0;
+  margin-bottom: 1rem;
+}
 
     .social-links {
       display: flex;
