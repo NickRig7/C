@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.utils import secure_filename
 from models import db, NewsArticle
 import feedparser
@@ -11,11 +11,16 @@ import mimetypes
 mimetypes.add_type('application/javascript', '.js')
 
 app = Flask(__name__)
+app.secret_key = os.environ.get('SECRET_KEY', 'fallback_dev_key')  # Needed for sessions, set securely in production
 # Developer Signature (Do not remove)
 _DEVELOPER_SIGNATURE = "Developed by Bikash"
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Dummy admin credentials
+ADMIN_USERNAME = 'chainlog'
+ADMIN_PASSWORD = 'phexonick'
 
 db.init_app(app)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -26,10 +31,10 @@ with app.app_context():
 CATEGORY_FEEDS = {
     "daily-news": [
         "https://www.coindesk.com/arc/outboundfeeds/rss",
-        "https://cointelegraph.com/rss",
+        "https://cointelegraph.com/rss/tag/blockchain",
     ],
-    "edu": ["https://cointelegraph.com/rss/tag/technology"],
-    "btca": ["https://cointelegraph.com/rss/tag/finance"],
+    "edu": ["https://cointelegraph.com/rss/category/analysis"],
+    "btca": ["https://cointelegraph.com/rss/tag/bitcoin"],
 }
 
 def summarize(text, word_limit=70):
@@ -96,12 +101,9 @@ def index():
 
 @app.route('/custom')
 def custom():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
     return render_template('custom_news_uploader.html')
-
-@app.route('/dashboard')
-def dashboard():
-    articles = NewsArticle.query.order_by(NewsArticle.id.desc()).all()
-    return render_template('dashboard.html', articles=articles)
 
 @app.route('/news')
 def news():
@@ -142,8 +144,14 @@ def news():
         } for a in articles
     ])
 
-@app.route('/upload-news', methods=['POST'])
+@app.route('/upload-news', methods=['GET', 'POST'])
 def upload_news():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+
+    if request.method == 'GET':
+        return render_template('custom_news_uploader.html')
+
     title = request.form.get('title')
     link = request.form.get('link')
     published = request.form.get('published')
@@ -176,23 +184,31 @@ def upload_news():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
 
-@app.route('/edit/<int:article_id>', methods=['GET', 'POST'])
+@app.route('/edit-article/<int:article_id>', methods=['GET', 'POST'])
 def edit_article(article_id):
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+
     article = NewsArticle.query.get_or_404(article_id)
+
     if request.method == 'POST':
-        article.title = request.form['title']
-        article.link = request.form['link']
-        article.published = request.form['published']
-        article.summary = request.form['summary']
-        article.image_url = request.form['image_url']
-        article.source = request.form['source']
-        article.category = request.form['category']
+        article.title = request.form.get('title')
+        article.link = request.form.get('link')
+        article.published = request.form.get('published')
+        article.summary = request.form.get('summary')
+        article.image_url = request.form.get('image_url')
+        article.source = request.form.get('source')
+        article.category = request.form.get('category')
         db.session.commit()
-        return redirect(url_for('edit_article', article_id=article.id))
+        return redirect(url_for('dashboard'))
+
     return render_template('edit_article.html', article=article)
 
 @app.route('/delete-article/<int:article_id>', methods=['POST'])
 def delete_article(article_id):
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+
     article = NewsArticle.query.get_or_404(article_id)
     db.session.delete(article)
     db.session.commit()
@@ -200,12 +216,14 @@ def delete_article(article_id):
 
 @app.route('/toggle-publish/<int:article_id>', methods=['POST'])
 def toggle_publish(article_id):
+    if not session.get('admin_logged_in'):
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+
     data = request.get_json()
-    is_published = data.get('published', False)
-    article = NewsArticle.query.get_or_404(article_id) 
-    article.is_published = is_published
+    article = NewsArticle.query.get_or_404(article_id)
+    article.is_published = data.get('published', False)
     db.session.commit()
-    return jsonify(success=True)
+    return jsonify({"success": True})
 
 @app.route('/manifest.json')
 def manifest():
@@ -214,19 +232,6 @@ def manifest():
 @app.route('/service-worker.js')
 def service_worker():
     return app.send_static_file('service-worker.js')
-
-'''@app.route('/refresh-news', methods=['POST'])
-def refresh_news():
-    category = request.args.get('category', 'daily-news')
-
-    # Delete all news in that category
-    NewsArticle.query.filter_by(category=category).delete()
-    db.session.commit()
-
-    # Re-fetch and store fresh news
-    fetch_news_by_category(category)
-
-    return jsonify({"success": True, "message": f"News refreshed for category: {category}"})'''
 
 @app.route('/refresh-news', methods=['POST'])
 def refresh_news():
@@ -249,6 +254,32 @@ def refresh_news():
 
     return jsonify({"success": True, "message": f"News refreshed for category: {category}"})
 
+# Admin login page
+@app.route('/admin-login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session['admin_logged_in'] = True
+            return redirect(url_for('dashboard'))
+        else:
+            return 'Invalid credentials', 401
+    return render_template('admin_login.html')
+
+# Admin logout
+@app.route('/admin-logout')
+def admin_logout():
+    session.pop('admin_logged_in', None)
+    return redirect(url_for('admin_login'))
+
+# Protect Dashboard
+@app.route('/dashboard')
+def dashboard():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    articles = NewsArticle.query.all()
+    return render_template('dashboard.html', articles=articles)
 
 
 if __name__ == '__main__':
