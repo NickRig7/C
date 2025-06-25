@@ -56,15 +56,29 @@ function renderArticles(articles) {
 
   initSwipe();
 
-    document.querySelectorAll('.share-btn').forEach(btn => {
+  // ---- SHORT LINK FUNCTION ----
+  async function getShortLink(longUrl) {
+    try {
+      const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+      return await res.text();
+    } catch (error) {
+      console.error('Shortening failed, using original URL:', error);
+      return longUrl;
+    }
+  }
+
+  // ---- SHARE BUTTON CLICK HANDLER ----
+  document.querySelectorAll('.share-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
       const link = btn.getAttribute('data-link');
+      const shortLink = await getShortLink(link);
+
       const shareData = {
         title: 'Check this news',
-        text: 'Interesting news from ChainShots!',
-        url: link
+        text: `${shortLink}\n\nOpen ChainShots 👉 https://chainapp.onrender.com`,
       };
+
       if (navigator.share) {
         try {
           await navigator.share(shareData);
