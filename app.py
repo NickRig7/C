@@ -215,7 +215,7 @@ def manifest():
 def service_worker():
     return app.send_static_file('service-worker.js')
 
-@app.route('/refresh-news', methods=['POST'])
+'''@app.route('/refresh-news', methods=['POST'])
 def refresh_news():
     category = request.args.get('category', 'daily-news')
 
@@ -226,7 +226,29 @@ def refresh_news():
     # Re-fetch and store fresh news
     fetch_news_by_category(category)
 
+    return jsonify({"success": True, "message": f"News refreshed for category: {category}"})'''
+
+@app.route('/refresh-news', methods=['POST'])
+def refresh_news():
+    category = request.args.get('category')
+    
+    if not category:
+        return jsonify({"success": False, "error": "Category is required."}), 400
+
+    # Optional: validate if it's a known category
+    valid_categories = {"daily-news", "edu", "btca", "for-you"}
+    if category not in valid_categories:
+        return jsonify({"success": False, "error": "Invalid category"}), 400
+
+    # Delete all news in that category
+    NewsArticle.query.filter_by(category=category).delete()
+    db.session.commit()
+
+    # Re-fetch and store fresh news
+    fetch_news_by_category(category)
+
     return jsonify({"success": True, "message": f"News refreshed for category: {category}"})
+
 
 
 if __name__ == '__main__':
