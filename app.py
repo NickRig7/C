@@ -19,8 +19,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Dummy admin credentials
-ADMIN_USERNAME = 'chainlog'
-ADMIN_PASSWORD = 'phexonick'
+ADMIN_USERNAME = 'chainlogshots'
+ADMIN_PASSWORD = 'phex$63Tan@'
 
 db.init_app(app)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
