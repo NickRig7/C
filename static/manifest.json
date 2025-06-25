@@ -1,6 +1,6 @@
 {
   "name": "ChainShots",
-  "short_name": "CS",
+  "short_name": "ChainShots",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#121212",

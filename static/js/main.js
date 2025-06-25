@@ -28,6 +28,16 @@ function renderArticles(articles) {
   articles.forEach(article => {
     const card = document.createElement('div');
     card.className = 'card';
+    /*card.innerHTML = `
+      <img src="${article.image_url || 'https://via.placeholder.com/400x200'}" alt="News Image" />
+      <div class="card-content">
+        <div class="title">${article.title}</div>
+        <div class="summary">${article.summary}</div>
+        <div class="read-more">
+          <a href="${article.link}" target="_blank">Read more</a>
+        </div>
+      </div>
+    `;*/
     card.innerHTML = `
       <img src="${article.image_url || 'https://via.placeholder.com/400x200'}" alt="News Image" />
       <div class="card-content">
@@ -37,11 +47,36 @@ function renderArticles(articles) {
           <a href="${article.link}" target="_blank">Read more</a>
         </div>
       </div>
+      <button class="share-btn" data-link="${article.link}">
+        <img src="/static/sharee.png" alt="Share" />
+      </button>
     `;
     container.appendChild(card);
   });
 
   initSwipe();
+
+    document.querySelectorAll('.share-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const link = btn.getAttribute('data-link');
+      const shareData = {
+        title: 'Check this news',
+        text: 'Interesting news from ChainShots!',
+        url: link
+      };
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+        } catch (err) {
+          console.error('Share failed:', err);
+        }
+      } else {
+        alert('Sharing not supported on this device.');
+      }
+    });
+  });
+
 }
 
 function initSwipe() {
