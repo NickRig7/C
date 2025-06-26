@@ -37,7 +37,7 @@ function renderArticles(articles) {
           <a href="${article.link}" target="_blank">Read more</a>
         </div>
       </div>
-      <button class="share-btn" data-link="${article.link}">
+      <button class="share-btn" data-link="${article.link}" data-title="${article.title}">
         <img src="/static/sharee.png" alt="Share" />
       </button>
     `;
@@ -137,12 +137,14 @@ async function getShortLink(longUrl) {
   }
 }
 
-// ✅ Event Delegation for all future .share-btn
+// ✅ Event Delegation for Share Buttons
 document.addEventListener('click', async (e) => {
   const btn = e.target.closest('.share-btn');
   if (btn) {
     e.stopPropagation();
     const link = btn.getAttribute('data-link');
+    const title = btn.getAttribute('data-title') || '';
+
     const shortLink = await getShortLink(link);
 
     const chainshotsUrl = "https://chainapp.onrender.com";
@@ -152,7 +154,6 @@ document.addEventListener('click', async (e) => {
       title: title,
       text: shareText,
     };
-
 
     if (navigator.share) {
       try {
@@ -166,7 +167,7 @@ document.addEventListener('click', async (e) => {
   }
 });
 
-// Category button click
+// Category Button Clicks
 document.querySelectorAll('.category-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
@@ -176,7 +177,7 @@ document.querySelectorAll('.category-btn').forEach(btn => {
   });
 });
 
-// Clear sessionStorage on hard reload
+// Clear sessionStorage on reload
 const navType = performance.getEntriesByType("navigation")[0]?.type || performance.navigation.type;
 if (navType === "reload") {
   Object.keys(sessionStorage)
@@ -186,7 +187,7 @@ if (navType === "reload") {
 
 loadNews();
 
-// Side menu toggle
+// Hamburger Side Menu Toggle
 const hamburger = document.querySelector('.hamburger-menu');
 const sideMenu = document.getElementById('sideMenu');
 
@@ -200,7 +201,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Dynamic layout height adjustment
+// Layout Height Fix for Mobile
 function adjustLayoutHeight() {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   const vh = window.innerHeight * 0.01;
