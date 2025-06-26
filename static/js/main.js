@@ -137,7 +137,7 @@ async function getShortLink(longUrl) {
   }
 }
 
-// ✅ Event Delegation for Share Buttons
+// ✅ Share Button Click Handler (with ChainShots clickable text)
 document.addEventListener('click', async (e) => {
   const btn = e.target.closest('.share-btn');
   if (btn) {
@@ -148,7 +148,7 @@ document.addEventListener('click', async (e) => {
     const shortLink = await getShortLink(link);
 
     const chainshotsUrl = "https://chainapp.onrender.com";
-    const shareText = `${title}\n\nRead full article: ${shortLink}\n\nDiscover more on [ChainShots](${chainshotsUrl})`;
+    const shareText = `${title}\n\nRead full article: ${shortLink}\n\nMore on [ChainShots](${chainshotsUrl})`;
 
     const shareData = {
       title: title,
