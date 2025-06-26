@@ -137,7 +137,7 @@ async function getShortLink(longUrl) {
   }
 }
 
-// ✅ Share Button Click Handler (with ChainShots clickable text)
+// ✅ Share Button Click Handler with HTML <a> link for ChainShots
 document.addEventListener('click', async (e) => {
   const btn = e.target.closest('.share-btn');
   if (btn) {
@@ -148,7 +148,7 @@ document.addEventListener('click', async (e) => {
     const shortLink = await getShortLink(link);
 
     const chainshotsUrl = "https://chainapp.onrender.com";
-    const shareText = `${title}\n\nRead full article: ${shortLink}\n\nMore on [ChainShots](${chainshotsUrl})`;
+    const shareText = `${title}\n\nRead full article: ${shortLink}\n\nMore on <a href="${chainshotsUrl}">ChainShots</a>`;
 
     const shareData = {
       title: title,
