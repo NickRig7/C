@@ -145,14 +145,14 @@ document.addEventListener('click', async (e) => {
     const link = btn.getAttribute('data-link');
     const shortLink = await getShortLink(link);
 
-    const card = btn.closest('.card');
-    const title = card.querySelector('.title')?.innerText || '';
-    const summary = card.querySelector('.summary')?.innerText || '';
+    const chainshotsUrl = "https://chainapp.onrender.com";
+    const shareText = `${title}\n\nRead full article: ${shortLink}\n\nCheck out more on ChainShots 👉 ${chainshotsUrl}`;
 
     const shareData = {
       title: title,
-      text: `${title}\n\n${summary}\n\nRead full article: ${shortLink}\n\nShared via ChainShots 👉 https://chainapp.onrender.com`,
+      text: shareText,
     };
+
 
     if (navigator.share) {
       try {
