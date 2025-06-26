@@ -32,12 +32,11 @@ function renderArticles(articles) {
       <img src="${article.image_url || 'https://via.placeholder.com/400x200'}" alt="News Image" />
       <div class="card-content">
         <div class="title">${article.title}</div>
-        <div class="summary">${article.summary}</div>
         <div class="read-more">
           <a href="${article.link}" target="_blank">Read more</a>
         </div>
       </div>
-      <button class="share-btn" data-link="${article.link}">
+      <button class="share-btn" data-link="${article.link}" data-title="${article.title}">
         <img src="/static/sharee.png" alt="Share" />
       </button>
     `;
@@ -137,21 +136,22 @@ async function getShortLink(longUrl) {
   }
 }
 
-// ✅ Event Delegation for all future .share-btn
+// ✅ Event Delegation for share buttons (works even after swipe or reload)
 document.addEventListener('click', async (e) => {
   const btn = e.target.closest('.share-btn');
   if (btn) {
     e.stopPropagation();
     const link = btn.getAttribute('data-link');
+    const title = btn.getAttribute('data-title') || '';
+
     const shortLink = await getShortLink(link);
 
-    const card = btn.closest('.card');
-    const title = card.querySelector('.title')?.innerText || '';
-    const summary = card.querySelector('.summary')?.innerText || '';
+    const chainshotsUrl = "https://chainapp.onrender.com";
+    const shareText = `${title}\n\nRead full article: ${shortLink}\n\nDiscover more on [ChainShots](${chainshotsUrl})`;
 
     const shareData = {
       title: title,
-      text: `${title}\n\n${summary}\n\nRead full article: ${shortLink}\n\nShared via ChainShots 👉 https://chainapp.onrender.com`,
+      text: shareText,
     };
 
     if (navigator.share) {
@@ -166,7 +166,7 @@ document.addEventListener('click', async (e) => {
   }
 });
 
-// Category button click
+// Category switching
 document.querySelectorAll('.category-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
@@ -186,7 +186,7 @@ if (navType === "reload") {
 
 loadNews();
 
-// Side menu toggle
+// Hamburger Side Menu
 const hamburger = document.querySelector('.hamburger-menu');
 const sideMenu = document.getElementById('sideMenu');
 
@@ -200,7 +200,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Dynamic layout height adjustment
+// Layout Height Fix for Mobile
 function adjustLayoutHeight() {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   const vh = window.innerHeight * 0.01;
