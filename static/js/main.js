@@ -28,16 +28,6 @@ function renderArticles(articles) {
   articles.forEach(article => {
     const card = document.createElement('div');
     card.className = 'card';
-    /*card.innerHTML = `
-      <img src="${article.image_url || 'https://via.placeholder.com/400x200'}" alt="News Image" />
-      <div class="card-content">
-        <div class="title">${article.title}</div>
-        <div class="summary">${article.summary}</div>
-        <div class="read-more">
-          <a href="${article.link}" target="_blank">Read more</a>
-        </div>
-      </div>
-    `;*/
     card.innerHTML = `
       <img src="${article.image_url || 'https://via.placeholder.com/400x200'}" alt="News Image" />
       <div class="card-content">
@@ -55,42 +45,6 @@ function renderArticles(articles) {
   });
 
   initSwipe();
-
-  // ---- SHORT LINK FUNCTION ----
-  async function getShortLink(longUrl) {
-    try {
-      const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
-      return await res.text();
-    } catch (error) {
-      console.error('Shortening failed, using original URL:', error);
-      return longUrl;
-    }
-  }
-
-  // ---- SHARE BUTTON CLICK HANDLER ----
-  document.querySelectorAll('.share-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      const link = btn.getAttribute('data-link');
-      const shortLink = await getShortLink(link);
-
-      const shareData = {
-        title: 'Check this news',
-        text: `${shortLink}\n\nOpen ChainShots 👉 https://chainapp.onrender.com`,
-      };
-
-      if (navigator.share) {
-        try {
-          await navigator.share(shareData);
-        } catch (err) {
-          console.error('Share failed:', err);
-        }
-      } else {
-        alert('Sharing not supported on this device.');
-      }
-    });
-  });
-
 }
 
 function initSwipe() {
@@ -173,6 +127,46 @@ function initSwipe() {
   }
 }
 
+async function getShortLink(longUrl) {
+  try {
+    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+    return await res.text();
+  } catch (error) {
+    console.error('Shortening failed, using original URL:', error);
+    return longUrl;
+  }
+}
+
+// ✅ Event Delegation for all future .share-btn
+document.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.share-btn');
+  if (btn) {
+    e.stopPropagation();
+    const link = btn.getAttribute('data-link');
+    const shortLink = await getShortLink(link);
+
+    const card = btn.closest('.card');
+    const title = card.querySelector('.title')?.innerText || '';
+    const summary = card.querySelector('.summary')?.innerText || '';
+
+    const shareData = {
+      title: title,
+      text: `${title}\n\n${summary}\n\nRead full article: ${shortLink}\n\nShared via ChainShots 👉 https://chainapp.onrender.com`,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error('Share failed:', err);
+      }
+    } else {
+      alert('Sharing not supported on this device.');
+    }
+  }
+});
+
+// Category button click
 document.querySelectorAll('.category-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
@@ -182,6 +176,7 @@ document.querySelectorAll('.category-btn').forEach(btn => {
   });
 });
 
+// Clear sessionStorage on hard reload
 const navType = performance.getEntriesByType("navigation")[0]?.type || performance.navigation.type;
 if (navType === "reload") {
   Object.keys(sessionStorage)
@@ -191,6 +186,7 @@ if (navType === "reload") {
 
 loadNews();
 
+// Side menu toggle
 const hamburger = document.querySelector('.hamburger-menu');
 const sideMenu = document.getElementById('sideMenu');
 
@@ -204,6 +200,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
+// Dynamic layout height adjustment
 function adjustLayoutHeight() {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   const vh = window.innerHeight * 0.01;
