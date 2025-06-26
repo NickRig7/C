@@ -148,7 +148,7 @@ document.addEventListener('click', async (e) => {
     const shortLink = await getShortLink(link);
 
     const chainshotsUrl = "https://chainapp.onrender.com";
-    const shareText = `${title}\n\nRead full article: ${shortLink}\n\nCheck out more on ChainShots 👉 ${chainshotsUrl}`;
+    const shareText = `${title}\n\nRead full article: ${shortLink}\n\nDiscover more on [ChainShots](${chainshotsUrl})`;
 
     const shareData = {
       title: title,
