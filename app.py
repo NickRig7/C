@@ -59,7 +59,7 @@ def summarize(text, word_limit=70):
             else:
                 raw_summary = entry.title
 
-            word_limit = 35 if "coindesk.com" in url else 70
+            word_limit = 50 if "coindesk.com" in url else 70
             summary = summarize(raw_summary, word_limit=word_limit)
 
             image_url = None
@@ -352,4 +352,4 @@ def dashboard():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
