@@ -25,14 +25,19 @@ function renderArticles(articles) {
     return;
   }
 
-  articles.forEach(article => {
+  articles.forEach((article, index) => {
     const card = document.createElement('div');
     card.className = 'card';
+
+    const swipeHintHTML = (index === articles.length - 1)
+      ? `<div class="swipe-hint">⇽ Swipe to explore ⇾</div>` : '';
+
     card.innerHTML = `
       <img src="${article.image_url || 'https://via.placeholder.com/400x200'}" alt="News Image" />
       <div class="card-content">
         <div class="title">${article.title}</div>
         <div class="summary">${article.summary}</div>
+        ${swipeHintHTML}
         <div class="read-more">
           <a href="${article.link}" target="_blank">Read more</a>
         </div>
@@ -137,7 +142,6 @@ async function getShortLink(longUrl) {
   }
 }
 
-// ✅ Share Button Click Handler (with ChainShots clickable text)
 document.addEventListener('click', async (e) => {
   const btn = e.target.closest('.share-btn');
   if (btn) {
@@ -167,7 +171,7 @@ document.addEventListener('click', async (e) => {
   }
 });
 
-// Category Button Clicks
+// Category Buttons
 document.querySelectorAll('.category-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
