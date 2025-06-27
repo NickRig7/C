@@ -42,7 +42,7 @@ def summarize(text, word_limit=70):
     words = clean_text.split()
     return ' '.join(words[:word_limit]) + ('...' if len(words) > word_limit else '')
 
-'''def fetch_news_by_category(category):
+def fetch_news_by_category(category):
     feeds = CATEGORY_FEEDS.get(category.lower(), CATEGORY_FEEDS['daily-news'])
 
     for url in feeds:
@@ -92,9 +92,9 @@ def summarize(text, word_limit=70):
         "published": a.published,
         "summary": a.summary,
         "image_url": a.image_url
-    } for a in articles]'''
+    } for a in articles]
 
-def fetch_news_by_category(category):
+'''def fetch_news_by_category(category):
     feeds = CATEGORY_FEEDS.get(category.lower(), CATEGORY_FEEDS['daily-news'])
 
     for url in feeds:
@@ -161,7 +161,7 @@ def fetch_news_by_category(category):
         "published": a.published,
         "summary": a.summary,
         "image_url": a.image_url
-    } for a in articles]
+    } for a in articles]'''
 
 @app.route('/')
 def index():
