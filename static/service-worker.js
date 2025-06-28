@@ -4,8 +4,8 @@ const URLS_TO_CACHE = [
   //'/static/css/styles.css',
   //'/static/js/main.js',
   '/static/manifest.json',
-  '/static/icons/icon-192.png',
-  '/static/icons/icon-512.png'
+  '/static/icons/cso.png', //'/static/icons/icon-192.png'
+  '/static/icons/csh.png'  //'/static/icons/icon-512.png'
 ];
 
 // Install event
